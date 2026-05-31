@@ -1,0 +1,32 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# STM32CubeIDE 
+Debug/
+Release/
+*.launch
+
+# compile files
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+*.map
+*.su
+*.lst
+
+# Qt 
+build/
+build-*/
+*.user
+Makefile*
+moc_*.cpp
+qrc_*.cpp
+ui_*.h
+
+# Python 
+__pycache__/
+*.pyc
+venv/
