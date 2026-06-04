@@ -8,6 +8,7 @@
 #ifndef INC_DELAY_H_
 #define INC_DELAY_H_
 
+#include <cstdint>
 
 class Delay {
 public:

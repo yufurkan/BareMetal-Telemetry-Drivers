@@ -30,3 +30,6 @@ ui_*.h
 __pycache__/
 *.pyc
 venv/
+
+.metadata/
+
