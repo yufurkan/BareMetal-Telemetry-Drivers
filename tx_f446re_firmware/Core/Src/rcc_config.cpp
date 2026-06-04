@@ -36,7 +36,7 @@ void SystemClock_Config(void) {
 	while(!(RCC->CR & (1<<25))) {if(++timeout_counter > HARDWARE_TIMEOUT) System_ErrorHandler();}
 
 	timeout_counter = 0;
-	PWR->CR |= (1<<16); //Over-drive enabled
+	PWR->CR |= (1<<16);
 	while(!(PWR->CSR & (1U<<16))){if(++timeout_counter > HARDWARE_TIMEOUT) System_ErrorHandler();}
 
 
@@ -48,6 +48,13 @@ void SystemClock_Config(void) {
 
 
 	FLASH->ACR |= (5 << 0);
+
+
+	// APB1 45MHZ
+	RCC->CFGR |= (5 << 10);
+
+	// APB2 MHZ
+	RCC->CFGR |= (4 << 13);
 
 
 	//sw=10 system clock ppl
