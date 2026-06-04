@@ -32,7 +32,7 @@ void SystemClock_Config(void) {
 	//to 180 mhz from 166
 	RCC->CR |=(1<<24);
 
-	timeout_counter = 0;
+	uint32_t timeout_counter = 0;
 	while(!(RCC->CR & (1<<25))) {if(++timeout_counter > HARDWARE_TIMEOUT) System_ErrorHandler();}
 
 	timeout_counter = 0;
