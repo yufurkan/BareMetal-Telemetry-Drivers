@@ -21,6 +21,8 @@ public:
 
     static uint8_t readByte(uint8_t devAddr, uint8_t regAddr);
 
+    static void readBytes(uint8_t devAddr, uint8_t regAddr,uint8_t readCount, uint8_t* data);
+
 private:
     I2C() = delete; // Static Class
 };

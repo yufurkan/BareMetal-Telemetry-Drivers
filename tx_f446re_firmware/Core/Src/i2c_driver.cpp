@@ -69,65 +69,65 @@ void I2C::init(void) {
 
 	uint32_t timeout;
 
-	    // Check if line is busy
-	    timeout = 100000;
-	    while(I2C1->SR2 & (1 << 1)) {
-	        if(--timeout == 0) return; // Failsafe
-	    }
+	// Check if line is busy
+	timeout = 100000;
+	while(I2C1->SR2 & (1 << 1)) {
+		if(--timeout == 0) return; // Failsafe
+	}
 
-	    // start signal
-	    I2C1->CR1 |= (1 << 8);
+	// start signal
+	I2C1->CR1 |= (1 << 8);
 
-	    //
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return; }
-
-
-
-	    //– Transmitter mode: Byte transmission starts automatically when a byte is written in the DR register. A continuous transmit stream can be maintained if the next data to be transmitted isput in DR once the transmission is started (TxE = 1)
-	    //– Receiver mode: Received byte is copied into DR (RxNE = 1). A continuous transmit streamcan be maintained if DR is read before the next data byte is received (RxNE = 1).Note: In target mode, the address is not copied into DR. Write collision is not managed (DR
-	    //can be written if TxE = 0). If an ARLO event occurs on ACK pulse, the received byte is
-	    //not copied into DR and so cannot be read.
-
-	    // Sending device adress data
-	    I2C1->DR = (devAddr << 1);
-
-	    // ADDR bite: Wait for address confirmation (ACK signal).
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return; }
+	//
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return; }
 
 
-	    //Clearing Status Registres--------------->
-	    //Reading I2C_SR2 after reading I2C_SR1 clears the ADDR flag, even if the ADDR flag was
-	    //set after reading I2C_SR1. Consequently, I2C_SR2 must be read only when ADDR is found
-	    //set in I2C_SR1 or when the STOPF bit is cleared.
+
+	//– Transmitter mode: Byte transmission starts automatically when a byte is written in the DR register. A continuous transmit stream can be maintained if the next data to be transmitted isput in DR once the transmission is started (TxE = 1)
+	//– Receiver mode: Received byte is copied into DR (RxNE = 1). A continuous transmit streamcan be maintained if DR is read before the next data byte is received (RxNE = 1).Note: In target mode, the address is not copied into DR. Write collision is not managed (DR
+	//can be written if TxE = 0). If an ARLO event occurs on ACK pulse, the received byte is
+	//not copied into DR and so cannot be read.
+
+	// Sending device adress data
+	I2C1->DR = (devAddr << 1);
+
+	// ADDR bite: Wait for address confirmation (ACK signal).
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return; }
 
 
-	    //	volatile uint32_t clearFlag = I2C1->SR1; // Due to fact that In high optimizatinon levels comp can remove this line, uint32_t clearFlag line is volatile
-	    //	clearFlag = I2C1->SR2;
-	    //	(void)clearFlag; // cast to void prevents compiler warnings
-
-	    (void)I2C1->SR1;
-	    (void)I2C1->SR2;
-
-	    //Clearing Status Registres---------------<
+	//Clearing Status Registres--------------->
+	//Reading I2C_SR2 after reading I2C_SR1 clears the ADDR flag, even if the ADDR flag was
+	//set after reading I2C_SR1. Consequently, I2C_SR2 must be read only when ADDR is found
+	//set in I2C_SR1 or when the STOPF bit is cleared.
 
 
-	    I2C1->DR = regAddr;
+	//	volatile uint32_t clearFlag = I2C1->SR1; // Due to fact that In high optimizatinon levels comp can remove this line, uint32_t clearFlag line is volatile
+	//	clearFlag = I2C1->SR2;
+	//	(void)clearFlag; // cast to void prevents compiler warnings
+
+	(void)I2C1->SR1;
+	(void)I2C1->SR2;
+
+	//Clearing Status Registres---------------<
 
 
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 7))) { if(--timeout == 0) return; }
+	I2C1->DR = regAddr;
 
-	    // send main data
-	    I2C1->DR = data;
 
-	    // BTF (byte transfer finished flag )- SR1 2. bite
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 2))) { if(--timeout == 0) return; }
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 7))) { if(--timeout == 0) return; }
 
-	    // STOP signal
-	    I2C1->CR1 |= (1 << 9);
+	// send main data
+	I2C1->DR = data;
+
+	// BTF (byte transfer finished flag )- SR1 2. bite
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 2))) { if(--timeout == 0) return; }
+
+	// STOP signal
+	I2C1->CR1 |= (1 << 9);
 
 
 }
@@ -136,58 +136,119 @@ uint8_t I2C::readByte(uint8_t devAddr, uint8_t regAddr){
 
 
 	uint32_t timeout;
-	    uint8_t receivedData = 0;
+	uint8_t receivedData = 0;
 
-	    // Check if line is busy
-	    timeout = 100000;
-	    while(I2C1->SR2 & (1 << 1)) { if(--timeout == 0) return 0; }
+	// Check if line is busy
+	timeout = 100000;
+	while(I2C1->SR2 & (1 << 1)) { if(--timeout == 0) return 0; }
 
-	    // START signal
-	    I2C1->CR1 |= (1 << 8);
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return 0; }
+	// START signal
+	I2C1->CR1 |= (1 << 8);
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return 0; }
 
-	    // Sending device adress data
-	    I2C1->DR = (devAddr << 1);
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return 0; }
+	// Sending device adress data
+	I2C1->DR = (devAddr << 1);
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return 0; }
 
-	    //clear tatus registers
-	    (void)I2C1->SR1;
-	   	(void)I2C1->SR2;
+	//clear tatus registers
+	(void)I2C1->SR1;
+	(void)I2C1->SR2;
 
-	    // Send register adress you want to read
-	    I2C1->DR = regAddr;
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 7))) { if(--timeout == 0) return 0; }
+	// Send register adress you want to read
+	I2C1->DR = regAddr;
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 7))) { if(--timeout == 0) return 0; }
 
-	    // Repeated Start for entering reading mode
-	    I2C1->CR1 |= (1 << 8);
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return 0; }
+	// Repeated Start for entering reading mode
+	I2C1->CR1 |= (1 << 8);
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return 0; }
 
-	    // Send device adress agin but reading mode
-	    I2C1->DR = (devAddr << 1) | 1;  // read signal
+	// Send device adress agin but reading mode
+	I2C1->DR = (devAddr << 1) | 1;  // read signal
 
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return 0; }
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return 0; }
 
-	    // NACK
-	    I2C1->CR1 &= ~(1 << 10);
+	// NACK
+	I2C1->CR1 &= ~(1 << 10);
 
-	    // ADDR bayragini temizle
-	    (void)I2C1->SR1;
-	    (void)I2C1->SR2;
+	// ADDR bayragini temizle
+	(void)I2C1->SR1;
+	(void)I2C1->SR2;
 
-	    // STOP after reading finished
-	    I2C1->CR1 |= (1 << 9);
+	// STOP after reading finished
+	I2C1->CR1 |= (1 << 9);
 
-	    // 7.Wait for the data to arrive Data Register
-	    timeout = 100000;
-	    while(!(I2C1->SR1 & (1 << 6))) { if(--timeout == 0) return 0; }
+	// Wait for the data to arrive Data Register
+	timeout = 100000;
+	while(!(I2C1->SR1 & (1 << 6))) { if(--timeout == 0) return 0; }
 
-	   // Read
-	    receivedData = I2C1->DR;
+   // Read
+	receivedData = I2C1->DR;
 
-	    return receivedData;
+	return receivedData;
+}
+
+
+
+void I2C::readBytes(uint8_t devAddr, uint8_t regAddr,uint8_t readCount, uint8_t* data){
+
+	uint32_t timeout;
+	uint32_t timeout2;
+	// Check if line is busy
+		timeout = 100000;
+		while(I2C1->SR2 & (1 << 1)) { if(--timeout == 0) return; }
+
+		// START signal
+		I2C1->CR1 |= (1 << 8);
+		timeout = 100000;
+		while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return; }
+
+		// Sending device adress data
+		I2C1->DR = (devAddr << 1);
+		timeout = 100000;
+		while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return; }
+
+		//clear tatus registers
+		(void)I2C1->SR1;
+		(void)I2C1->SR2;
+
+		// Send register adress you want to read
+		I2C1->DR = regAddr;
+		timeout = 100000;
+		while(!(I2C1->SR1 & (1 << 7))) { if(--timeout == 0) return; }
+
+		I2C1->CR1 |= (1 << 8);
+		timeout = 100000;
+		while(!(I2C1->SR1 & (1 << 0))) { if(--timeout == 0) return; }
+
+
+		I2C1->DR = (devAddr << 1) | 1;
+		timeout = 100000;
+		while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return; }
+		(void)I2C1->SR1;
+		(void)I2C1->SR2;
+
+
+		I2C1->CR1 |= (1 << 10);//ACK
+
+		for(uint8_t i=0; i<readCount; i++){
+
+		if (readCount-1==i) {
+
+			//Nack
+			I2C1->CR1 &= ~(1 << 10);
+			//Stop
+			I2C1->CR1 |= (1 << 9);
+		}
+
+		timeout = 100000;
+		while (!(I2C1->SR1 & (1 << 6))) {if (--timeout == 0) return;}
+
+		*data++ = I2C1->DR;
+
+		}
 }
