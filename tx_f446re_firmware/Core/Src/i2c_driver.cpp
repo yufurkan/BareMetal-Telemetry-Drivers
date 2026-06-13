@@ -229,11 +229,15 @@ void I2C::readBytes(uint8_t devAddr, uint8_t regAddr,uint8_t readCount, uint8_t*
 		I2C1->DR = (devAddr << 1) | 1;
 		timeout = 100000;
 		while(!(I2C1->SR1 & (1 << 1))) { if(--timeout == 0) return; }
+
+
+		//it must be before SR1-2 clearance
+		I2C1->CR1 |= (1 << 10);//ACK
+
 		(void)I2C1->SR1;
 		(void)I2C1->SR2;
 
 
-		I2C1->CR1 |= (1 << 10);//ACK
 
 		for(uint8_t i=0; i<readCount; i++){
 

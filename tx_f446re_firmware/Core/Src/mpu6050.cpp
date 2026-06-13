@@ -38,3 +38,24 @@ void MPU6050::readAll(MPU6050_Data* dataStruct) {
     dataStruct->Gyro_Y  = (int16_t)(rawData[10] << 8 | rawData[11]);
     dataStruct->Gyro_Z  = (int16_t)(rawData[12] << 8 | rawData[13]);
 }
+
+
+
+void MPU6050::scaleData(const MPU6050_Data* raw, MPU6050_ScaledData* scaled) {
+
+
+	// Datasheet: Temperature in degrees C = (TEMP_OUT Register Value as a signed quantity) / 340 + 36.53
+
+
+    // ±2g sensibility 16384.0f
+    scaled->Accel_X = (float)raw->Accel_X / 16384.0f;
+    scaled->Accel_Y = (float)raw->Accel_Y / 16384.0f;
+    scaled->Accel_Z = (float)raw->Accel_Z / 16384.0f;
+
+    scaled->Temp = ((float)raw->Temp / 340.0f) + 36.53f;
+
+    // ±250 deg/s sensibility 131.0f
+    scaled->Gyro_X = (float)raw->Gyro_X / 131.0f;
+    scaled->Gyro_Y = (float)raw->Gyro_Y / 131.0f;
+    scaled->Gyro_Z = (float)raw->Gyro_Z / 131.0f;
+}

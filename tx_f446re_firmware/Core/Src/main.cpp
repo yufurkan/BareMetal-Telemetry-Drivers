@@ -7,7 +7,7 @@
 #define WHO_AM_I_REG 0x75
 
 MPU6050_Data imu_data;
-
+MPU6050_ScaledData scaled_imu;
 
 
 int main(void) {
@@ -27,6 +27,7 @@ int main(void) {
     while(1) {
 
     	MPU6050::readAll(&imu_data);
+    	MPU6050::scaleData(&imu_data, &scaled_imu);
         Delay::ms(100);
 
     }

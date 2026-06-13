@@ -25,12 +25,22 @@ struct MPU6050_Data {
     int16_t Gyro_Z;
 };
 
-
+struct MPU6050_ScaledData {
+    float Accel_X;
+    float Accel_Y;
+    float Accel_Z;
+    float Temp;
+    float Gyro_X;
+    float Gyro_Y;
+    float Gyro_Z;
+};
 
 class MPU6050 {
 public:
     static void init();
     static void readAll(MPU6050_Data* data);
+
+    static void scaleData(const MPU6050_Data* raw, MPU6050_ScaledData* scaled);
 
 };
 
