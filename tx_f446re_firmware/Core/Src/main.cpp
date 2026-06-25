@@ -18,9 +18,10 @@ int main(void) {
 
 
     SystemClock_Config();
+
     Delay::init();
     I2C::init();
-
+    MPU6050::init();
 
     SPI::init();
     NRF24::init();
@@ -34,11 +35,16 @@ int main(void) {
     nrf24_test_val = NRF24::readReg(REG_RF_SETUP);
 
 
-    MPU6050::init();
+
+
+    NRF24::tx_mode(tx_address, RF_CHANNEL);
     while(1) {
 
     	MPU6050::readAll(&imu_data);
     	MPU6050::scaleData(&imu_data, &scaled_imu);
+
+    	tx_status = NRF24::transmit((uint8_t*)&scaled_imu, sizeof(scaled_imu));
+
         Delay::ms(100);
 
     }

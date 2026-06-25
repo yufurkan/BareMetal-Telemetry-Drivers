@@ -15,7 +15,7 @@
 
 void SPI::init(void) {
 
-    // CS=PA4  SCK=PA5  MISO=PA6  MOSI=PA7
+    // CS=PA4  SCK=PA5  MISO=PA6  MOSI=PA7 CE=PA3
 
     RCC->APB2ENR |= (1 << 12); // SPI1 clock enable
     RCC->AHB1ENR |= (1 << 0);  // GPIOA clock enable
@@ -45,9 +45,6 @@ void SPI::init(void) {
 
     // --- GPIO Configuration ---/
 
-
-
-
     // --- SPI Configuration ---
 
     // NNS manual
@@ -59,7 +56,7 @@ void SPI::init(void) {
     SPI1->CR1 |= (3 << 3);
 
     // Master selection
-    SPI1->CR1 |= (1 << 2);
+    SPI1->CR1 |= (1 << 2);//we are master
 
     // CPOL=0, CPHA=0, MSB First default
 
@@ -80,15 +77,20 @@ void SPI::cs_disable(void) {
 }
 
 uint8_t SPI::transmitReceive(uint8_t data) {
+
+	uint32_t timeout = 10000;
     // Wait until TX buffer is empty TXE = 1
-    while (!(SPI1->SR & (1 << 1)));
+    while (!(SPI1->SR & (1 << 1))){if (--timeout == 0) return 0x00;};
 
     // Send data
     SPI1->DR = data;
 
+
     // Wait until RX buffer is not empty RXNE = 1
-    while (!(SPI1->SR & (1 << 0)));
+    timeout = 10000;
+    while (!(SPI1->SR & (1 << 0))){if (--timeout == 0) return 0x00;};
 
     // Read received data
+    // When DR is read, hardware sets SPI1->SR as 0
     return SPI1->DR;
 }
