@@ -35,7 +35,9 @@ int main(void) {
     nrf24_test_val = NRF24::readReg(REG_RF_SETUP);
 
 
-
+    uint8_t RF_CHANNEL=115;
+    uint8_t tx_address[5] = {0x11, 0x22, 0x33, 0x44, 0x55};
+    bool tx_status = false;
 
     NRF24::tx_mode(tx_address, RF_CHANNEL);
     while(1) {

@@ -27,6 +27,7 @@
 #define REG_RF_SETUP      0x06  // rf speed- pawer
 #define REG_STATUS        0x07  // status reg (Interrupt flags)
 #define REG_TX_ADDR       0x10  // tx target addr
+#define REG_RX_ADDR_P0	  0x0A  // pipe 0 RX reg addres
 // --- NRF24L01 Register Map/
 
 class NRF24 {
