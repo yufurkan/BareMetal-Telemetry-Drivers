@@ -27,6 +27,7 @@
 #define REG_RF_SETUP      0x06  // rf speed- pawer
 #define REG_STATUS        0x07  // status reg (Interrupt flags)
 #define REG_TX_ADDR       0x10  // tx target addr
+#define REG_RX_ADDR_P0	  0x0A  // pipe 0 RX reg addres
 // --- NRF24L01 Register Map/
 
 class NRF24 {
@@ -36,10 +37,14 @@ public:
 
     static void writeReg(uint8_t reg, uint8_t data);
     static uint8_t readReg(uint8_t reg);
-
+    static void writeRegMulti(uint8_t reg, uint8_t *data, uint8_t size);
     // CE PA3
     static void ce_high(void);
     static void ce_low(void);
+
+    //tx
+    static void tx_mode(uint8_t *address, uint8_t channel);
+    static bool transmit(uint8_t *payload, uint8_t size);
 };
 
 
